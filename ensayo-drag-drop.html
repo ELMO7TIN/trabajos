@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estructura del Ensayo Académico</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px 40px;
+      max-width: 860px;
+      width: 100%;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.45);
+    }
+
+    /* ── TITLE SCREEN ── */
+    #screen-title { text-align: center; }
+
+    .badge {
+      display: inline-block;
+      background: #e8f4fd;
+      color: #0f3460;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #0f3460;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    h1 span { color: #e94560; }
+
+    .subtitle {
+      font-size: 0.97rem;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .how-to {
+      background: #f8f9ff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .how-to h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #0f3460;
+      margin-bottom: 12px;
+    }
+
+    .how-to ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .how-to li {
+      font-size: 0.9rem;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .how-to li span.dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #e94560;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 36px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #e94560, #c0392b);
+      color: #fff;
+      width: 100%;
+      font-size: 1.05rem;
+      padding: 16px;
+    }
+
+    .btn-ghost {
+      background: #f0f4ff;
+      color: #0f3460;
+      font-size: 0.9rem;
+      padding: 10px 24px;
+    }
+
+    /* ── GAME SCREEN ── */
+    #screen-game { display: none; }
+
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .game-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f3460;
+    }
+
+    .score-badge {
+      background: #0f3460;
+      color: #fff;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .score-badge span { color: #ff6b6b; }
+
+    /* Words bank */
+    .words-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    #words-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-height: 56px;
+      background: #f8f9ff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 28px;
+      border: 2px dashed #dde3f5;
+      transition: border-color 0.2s;
+    }
+
+    #words-bank.drag-over { border-color: #0f3460; }
+
+    .word-chip {
+      background: #0f3460;
+      color: #fff;
+      border-radius: 50px;
+      padding: 9px 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      touch-action: none;
+    }
+
+    .word-chip:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(15,52,96,0.3); }
+    .word-chip.dragging { opacity: 0.4; cursor: grabbing; }
+
+    .word-chip.placed-correct {
+      background: #27ae60;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* Drop zones */
+    .zones-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .zone {
+      border-radius: 16px;
+      border: 2px dashed #dde3f5;
+      padding: 16px;
+      min-height: 200px;
+      transition: border-color 0.2s, background 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .zone.drag-over {
+      border-color: #0f3460;
+      background: #eef2ff;
+    }
+
+    .zone-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .zone-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .zone[data-zone="Introducción"] .zone-icon { background: #fde8ee; }
+    .zone[data-zone="Desarrollo"]   .zone-icon { background: #e8f0fd; }
+    .zone[data-zone="Conclusión"]   .zone-icon { background: #e8fdf0; }
+
+    .zone-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+
+    .zone-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+    }
+
+    /* Feedback toast */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    #toast.correct-toast { background: #27ae60; }
+    #toast.incorrect-toast { background: #e74c3c; }
+
+    /* Result screen */
+    #screen-result { display: none; text-align: center; }
+
+    .result-emoji { font-size: 4rem; margin-bottom: 12px; }
+    .result-title { font-size: 1.8rem; font-weight: 800; color: #0f3460; margin-bottom: 8px; }
+    .result-score { font-size: 3.5rem; font-weight: 900; color: #e94560; margin: 12px 0 6px; }
+    .result-score span { font-size: 1.4rem; color: #999; font-weight: 400; }
+    .result-msg { font-size: 0.97rem; color: #666; line-height: 1.7; margin-bottom: 28px; }
+
+    .result-breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .breakdown-card {
+      background: #f8f9ff;
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .breakdown-card .bc-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .breakdown-card .bc-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f3460;
+    }
+
+    /* Animations */
+    @keyframes pop {
+      0%   { transform: scale(0.8); opacity: 0; }
+      60%  { transform: scale(1.1); }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+
+    .pop { animation: pop 0.3s ease forwards; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-6px); }
+      40%       { transform: translateX(6px); }
+      60%       { transform: translateX(-4px); }
+      80%       { transform: translateX(4px); }
+    }
+
+    .shake { animation: shake 0.35s ease; }
+
+    @media (max-width: 600px) {
+      .zones-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.8rem; }
+      .container { padding: 24px 20px; }
+      .result-breakdown { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div class="container">
+
+  <!-- ══ TITLE SCREEN ══ -->
+  <div id="screen-title">
+    <div class="badge">Juego Educativo</div>
+    <h1>Estructura del<br><span>Ensayo Académico</span></h1>
+    <p class="subtitle">Arrastra cada concepto a la sección correcta del ensayo académico y demuestra cuánto sabes.</p>
+
+    <div class="how-to">
+      <h3>¿Cómo jugar?</h3>
+      <ul>
+        <li><span class="dot"></span>Verás palabras clave en la parte superior.</li>
+        <li><span class="dot"></span>Arrástralas a la sección del ensayo donde corresponden.</li>
+        <li><span class="dot"></span>Si es correcto, la palabra se queda en verde. Si no, regresa.</li>
+        <li><span class="dot"></span>¡Coloca las 7 palabras correctamente para ganar!</li>
+      </ul>
+    </div>
+
+    <button class="btn btn-primary" onclick="startGame()">Comenzar juego →</button>
+  </div>
+
+  <!-- ══ GAME SCREEN ══ -->
+  <div id="screen-game">
+    <div class="game-header">
+      <div class="game-title">Estructura del Ensayo Académico</div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div class="score-badge">Puntos: <span id="score-val">0</span></div>
+        <button class="btn btn-ghost" onclick="restartGame()">↺ Reiniciar</button>
+      </div>
+    </div>
+
+    <div class="words-label">Conceptos — arrastra cada uno a su sección</div>
+    <div id="words-bank"></div>
+
+    <div class="zones-grid">
+      <div class="zone" data-zone="Introducción"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="zone-header">
+          <div class="zone-icon">📌</div>
+          <div class="zone-name">Introducción</div>
+        </div>
+        <div class="zone-chips" id="zone-Introducción"></div>
+      </div>
+
+      <div class="zone" data-zone="Desarrollo"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="zone-header">
+          <div class="zone-icon">📝</div>
+          <div class="zone-name">Desarrollo</div>
+        </div>
+        <div class="zone-chips" id="zone-Desarrollo"></div>
+      </div>
+
+      <div class="zone" data-zone="Conclusión"
+           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="zone-header">
+          <div class="zone-icon">✅</div>
+          <div class="zone-name">Conclusión</div>
+        </div>
+        <div class="zone-chips" id="zone-Conclusión"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RESULT SCREEN ══ -->
+  <div id="screen-result">
+    <div class="result-emoji" id="res-emoji"></div>
+    <div class="result-title" id="res-title"></div>
+    <div class="result-score" id="res-score"></div>
+    <p class="result-msg" id="res-msg"></p>
+    <div class="result-breakdown">
+      <div class="breakdown-card">
+        <div class="bc-label">Correctas</div>
+        <div class="bc-val" id="res-correct" style="color:#27ae60"></div>
+      </div>
+      <div class="breakdown-card">
+        <div class="bc-label">Incorrectas</div>
+        <div class="bc-val" id="res-incorrect" style="color:#e74c3c"></div>
+      </div>
+      <div class="breakdown-card">
+        <div class="bc-label">Total palabras</div>
+        <div class="bc-val" id="res-total"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="restartGame()" style="margin-bottom:12px">↺ Jugar de nuevo</button>
+    <br>
+    <button class="btn btn-ghost" onclick="goHome()">Volver al inicio</button>
+  </div>
+
+</div>
+
+<script>
+  const WORDS = [
+    { text: 'Tesis',      zone: 'Introducción' },
+    { text: 'Tema',       zone: 'Introducción' },
+    { text: 'Argumentos', zone: 'Desarrollo'   },
+    { text: 'Evidencia',  zone: 'Desarrollo'   },
+    { text: 'Conectores', zone: 'Desarrollo'   },
+    { text: 'Síntesis',   zone: 'Conclusión'   },
+    { text: 'Cierre',     zone: 'Conclusión'   },
+  ];
+
+  let score = 0;
+  let correctCount = 0;
+  let incorrectCount = 0;
+  let draggingWord = null;
+  let toastTimer = null;
+
+  // ── Audio (Web Audio API) ──────────────────────────────────────
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
+
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    return audioCtx;
+  }
+
+  function playTone(freq, type, duration, gainVal) {
+    try {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  function soundCorrect() {
+    playTone(523, 'sine', 0.12, 0.3);
+    setTimeout(() => playTone(659, 'sine', 0.15, 0.3), 100);
+    setTimeout(() => playTone(784, 'sine', 0.2,  0.3), 200);
+  }
+
+  function soundIncorrect() {
+    playTone(220, 'sawtooth', 0.15, 0.2);
+    setTimeout(() => playTone(180, 'sawtooth', 0.2, 0.2), 120);
+  }
+
+  function soundWin() {
+    [523,659,784,1047].forEach((f,i) => setTimeout(() => playTone(f,'sine',0.25,0.3), i*100));
+  }
+
+  // ── Toast ──────────────────────────────────────────────────────
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    clearTimeout(toastTimer);
+    t.textContent = msg;
+    t.className = `show ${type}-toast`;
+    toastTimer = setTimeout(() => { t.className = ''; }, 1800);
+  }
+
+  // ── Shuffle ────────────────────────────────────────────────────
+  function shuffle(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
+  }
+
+  // ── Build bank ────────────────────────────────────────────────
+  function buildBank() {
+    const bank = document.getElementById('words-bank');
+    bank.innerHTML = '';
+    shuffle(WORDS).forEach(w => {
+      const chip = createChip(w.text);
+      bank.appendChild(chip);
+    });
+  }
+
+  function createChip(text) {
+    const chip = document.createElement('div');
+    chip.className = 'word-chip';
+    chip.textContent = text;
+    chip.draggable = true;
+    chip.dataset.word = text;
+
+    chip.addEventListener('dragstart', e => {
+      draggingWord = text;
+      chip.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    chip.addEventListener('dragend', () => {
+      chip.classList.remove('dragging');
+      draggingWord = null;
+    });
+
+    // Touch support
+    chip.addEventListener('touchstart', onTouchStart, { passive: true });
+
+    return chip;
+  }
+
+  // ── Drag events ───────────────────────────────────────────────
+  function onDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+  }
+
+  function onDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    const zone = e.currentTarget;
+    zone.classList.remove('drag-over');
+    if (!draggingWord) return;
+    handleDrop(draggingWord, zone.dataset.zone);
+  }
+
+  // ── Touch drag ────────────────────────────────────────────────
+  let touchChip = null;
+  let ghost = null;
+
+  function onTouchStart(e) {
+    touchChip = e.currentTarget;
+    const touch = e.touches[0];
+
+    ghost = touchChip.cloneNode(true);
+    ghost.style.cssText = `
+      position:fixed; opacity:0.85; pointer-events:none; z-index:9999;
+      transform:scale(1.08); transition:none;
+    `;
+    positionGhost(ghost, touch);
+    document.body.appendChild(ghost);
+
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd);
+  }
+
+  function positionGhost(g, touch) {
+    const rect = touchChip.getBoundingClientRect();
+    g.style.left = (touch.clientX - rect.width / 2) + 'px';
+    g.style.top  = (touch.clientY - rect.height / 2) + 'px';
+    g.style.width = rect.width + 'px';
+  }
+
+  function onTouchMove(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    positionGhost(ghost, touch);
+
+    // Highlight zone under finger
+    document.querySelectorAll('.zone').forEach(z => z.classList.remove('drag-over'));
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const zone = el && el.closest('.zone');
+    if (zone) zone.classList.add('drag-over');
+  }
+
+  function onTouchEnd(e) {
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+
+    const touch = e.changedTouches[0];
+    if (ghost) { ghost.remove(); ghost = null; }
+
+    document.querySelectorAll('.zone').forEach(z => z.classList.remove('drag-over'));
+
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const zone = el && el.closest('.zone');
+    if (zone && touchChip) {
+      handleDrop(touchChip.dataset.word, zone.dataset.zone);
+    }
+    touchChip = null;
+  }
+
+  // ── Core logic ────────────────────────────────────────────────
+  function handleDrop(word, zoneName) {
+    const wordDef = WORDS.find(w => w.text === word);
+    if (!wordDef) return;
+
+    if (wordDef.zone === zoneName) {
+      // Correct
+      score += 10;
+      correctCount++;
+      document.getElementById('score-val').textContent = score;
+
+      // Remove from bank
+      const chip = document.querySelector(`#words-bank [data-word="${word}"]`);
+      if (chip) chip.remove();
+
+      // Add to zone
+      const placed = document.createElement('div');
+      placed.className = 'word-chip placed-correct pop';
+      placed.textContent = word;
+      document.getElementById(`zone-${zoneName}`).appendChild(placed);
+
+      soundCorrect();
+      showToast('✅ ¡Correcto!', 'correct');
+
+      if (correctCount === WORDS.length) {
+        setTimeout(showResult, 600);
+      }
+    } else {
+      // Incorrect
+      incorrectCount++;
+      soundIncorrect();
+      showToast('❌ Incorrecto — intenta de nuevo', 'incorrect');
+
+      // Shake the chip in bank
+      const chip = document.querySelector(`#words-bank [data-word="${word}"]`);
+      if (chip) {
+        chip.classList.remove('shake');
+        void chip.offsetWidth; // reflow
+        chip.classList.add('shake');
+        chip.addEventListener('animationend', () => chip.classList.remove('shake'), { once: true });
+      }
+    }
+  }
+
+  // ── Result ────────────────────────────────────────────────────
+  function showResult() {
+    soundWin();
+    document.getElementById('screen-game').style.display = 'none';
+    document.getElementById('screen-result').style.display = 'block';
+
+    const pct = Math.round((correctCount / WORDS.length) * 100);
+
+    let emoji, title, msg;
+    if (incorrectCount === 0) {
+      emoji = '🏆'; title = '¡Perfecto!';
+      msg = 'Colocaste todos los conceptos correctamente sin ningún error. ¡Dominas la estructura del ensayo académico!';
+    } else if (incorrectCount <= 3) {
+      emoji = '🎓'; title = '¡Muy bien!';
+      msg = 'Lograste completar el juego con pocos errores. Tienes una buena comprensión de la estructura del ensayo.';
+    } else {
+      emoji = '📚'; title = '¡Lo lograste!';
+      msg = 'Completaste el juego. Te recomendamos repasar la estructura del ensayo académico para mejorar tu dominio del tema.';
+    }
+
+    document.getElementById('res-emoji').textContent = emoji;
+    document.getElementById('res-title').textContent = title;
+    document.getElementById('res-score').innerHTML = `${score} <span>puntos</span>`;
+    document.getElementById('res-msg').textContent = msg;
+    document.getElementById('res-correct').textContent = correctCount;
+    document.getElementById('res-incorrect').textContent = incorrectCount;
+    document.getElementById('res-total').textContent = WORDS.length;
+  }
+
+  // ── Controls ──────────────────────────────────────────────────
+  function startGame() {
+    score = 0; correctCount = 0; incorrectCount = 0;
+    document.getElementById('score-val').textContent = '0';
+    document.getElementById('screen-title').style.display = 'none';
+    document.getElementById('screen-result').style.display = 'none';
+    document.getElementById('screen-game').style.display = 'block';
+
+    // Clear zones
+    ['Introducción','Desarrollo','Conclusión'].forEach(z => {
+      document.getElementById(`zone-${z}`).innerHTML = '';
+    });
+
+    buildBank();
+  }
+
+  function restartGame() { startGame(); }
+
+  function goHome() {
+    document.getElementById('screen-game').style.display = 'none';
+    document.getElementById('screen-result').style.display = 'none';
+    document.getElementById('screen-title').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>

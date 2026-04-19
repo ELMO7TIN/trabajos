@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¿Sabes APA?</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 680px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ── PANTALLA DE TÍTULO ── */
+    #screen-title {
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e8f4fd;
+      color: #0f3460;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #0f3460;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    h1 span {
+      color: #e94560;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .info-card {
+      background: #f8f9ff;
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+
+    .info-card .icon {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+    }
+
+    .info-card .label {
+      font-size: 0.75rem;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-card .value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f3460;
+      margin-top: 2px;
+    }
+
+    /* ── BOTONES ── */
+    .btn {
+      display: inline-block;
+      padding: 14px 36px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #e94560, #c0392b);
+      color: #fff;
+      width: 100%;
+      font-size: 1.1rem;
+      padding: 16px;
+    }
+
+    .btn-secondary {
+      background: #f0f4ff;
+      color: #0f3460;
+      width: 100%;
+      font-size: 1rem;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    /* ── PANTALLA DE PREGUNTA ── */
+    #screen-quiz { display: none; }
+
+    .progress-bar-wrap {
+      background: #eee;
+      border-radius: 10px;
+      height: 8px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e94560, #ff6b6b);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #999;
+      margin-bottom: 28px;
+    }
+
+    .question-number {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #e94560;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      background: #f8f9ff;
+      border: 2px solid #e8ecf8;
+      border-radius: 12px;
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 0.95rem;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: #0f3460;
+      background: #eef2ff;
+      color: #0f3460;
+    }
+
+    .option-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e8ecf8;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #0f3460;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .option-btn.correct {
+      background: #e8f8f0;
+      border-color: #27ae60;
+      color: #1a6b3c;
+    }
+
+    .option-btn.correct .option-letter {
+      background: #27ae60;
+      color: #fff;
+    }
+
+    .option-btn.incorrect {
+      background: #fdf0f0;
+      border-color: #e74c3c;
+      color: #922b21;
+    }
+
+    .option-btn.incorrect .option-letter {
+      background: #e74c3c;
+      color: #fff;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    /* ── FEEDBACK ── */
+    .feedback-box {
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .feedback-box.show { display: flex; }
+
+    .feedback-box.correct-fb {
+      background: #e8f8f0;
+      color: #1a6b3c;
+      border: 1px solid #a9dfbf;
+    }
+
+    .feedback-box.incorrect-fb {
+      background: #fdf0f0;
+      color: #922b21;
+      border: 1px solid #f1948a;
+    }
+
+    .feedback-icon { font-size: 1.3rem; }
+
+    /* ── PANTALLA FINAL ── */
+    #screen-result { display: none; text-align: center; }
+
+    .result-emoji {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .result-level {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #0f3460;
+      margin-bottom: 8px;
+    }
+
+    .result-score {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #e94560;
+      margin: 16px 0 8px;
+    }
+
+    .result-score span {
+      font-size: 1.5rem;
+      color: #999;
+      font-weight: 400;
+    }
+
+    .result-message {
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .score-bar-wrap {
+      background: #eee;
+      border-radius: 10px;
+      height: 12px;
+      margin: 16px 0 32px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #e94560, #ff6b6b);
+      transition: width 1s ease;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ══ PANTALLA TÍTULO ══ -->
+  <div id="screen-title">
+    <div class="badge">Quiz Académico</div>
+    <h1>¿Sabes <span>APA?</span></h1>
+    <p class="subtitle">Pon a prueba tus conocimientos sobre ensayos académicos y la normativa APA con este quiz interactivo.</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="icon">📝</div>
+        <div class="label">Preguntas</div>
+        <div class="value">10</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🎯</div>
+        <div class="label">Opciones</div>
+        <div class="value">4 por pregunta</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🏆</div>
+        <div class="label">Niveles</div>
+        <div class="value">3 niveles</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startQuiz()">Comenzar Quiz →</button>
+  </div>
+
+  <!-- ══ PANTALLA QUIZ ══ -->
+  <div id="screen-quiz">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+    <div class="progress-meta">
+      <span id="progress-text">Pregunta 1 de 10</span>
+      <span id="score-display">Puntos: 0</span>
+    </div>
+
+    <div class="question-number" id="question-number">Pregunta 1</div>
+    <div class="question-text" id="question-text"></div>
+
+    <div class="options-grid" id="options-grid"></div>
+
+    <div class="feedback-box" id="feedback-box">
+      <span class="feedback-icon" id="feedback-icon"></span>
+      <span id="feedback-text"></span>
+    </div>
+
+    <button class="btn btn-primary hidden" id="btn-next" onclick="nextQuestion()">
+      Siguiente pregunta →
+    </button>
+  </div>
+
+  <!-- ══ PANTALLA RESULTADO ══ -->
+  <div id="screen-result">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div class="result-level" id="result-level"></div>
+    <div class="result-score" id="result-score"></div>
+    <div class="score-bar-wrap">
+      <div class="score-bar-fill" id="score-bar-fill" style="width:0%"></div>
+    </div>
+    <p class="result-message" id="result-message"></p>
+    <button class="btn btn-primary" onclick="restartQuiz()">Jugar de nuevo 🔄</button>
+    <button class="btn btn-secondary" onclick="goHome()">Volver al inicio</button>
+  </div>
+
+</div>
+
+<script>
+  const questions = [
+    {
+      question: "¿Qué es un ensayo académico?",
+      options: [
+        "Un texto narrativo que cuenta una historia de ficción",
+        "Un texto argumentativo que defiende una postura con evidencia y rigor académico",
+        "Un resumen de un libro o artículo científico",
+        "Una lista de datos estadísticos sobre un tema"
+      ],
+      correct: 1,
+      feedback: "El ensayo académico es un texto argumentativo que presenta y defiende una postura mediante evidencia, análisis y fuentes confiables."
+    },
+    {
+      question: "¿Cuál es la estructura básica de un ensayo académico?",
+      options: [
+        "Portada, índice, bibliografía",
+        "Introducción, nudo y desenlace",
+        "Introducción, desarrollo (cuerpo) y conclusión",
+        "Resumen, metodología y resultados"
+      ],
+      correct: 2,
+      feedback: "Todo ensayo académico se organiza en tres partes: introducción (presenta el tema y la tesis), desarrollo (argumenta y sustenta) y conclusión (cierra y sintetiza)."
+    },
+    {
+      question: "¿Qué es la tesis en un ensayo académico?",
+      options: [
+        "El título del ensayo",
+        "La postura o idea central que el autor defiende a lo largo del texto",
+        "La lista de referencias al final del documento",
+        "El párrafo de cierre del ensayo"
+      ],
+      correct: 1,
+      feedback: "La tesis es la idea principal o postura que el autor sostiene y que guía todo el desarrollo argumentativo del ensayo."
+    },
+    {
+      question: "Según las normas APA (7.ª edición), ¿cuál es el tamaño de fuente y tipo de letra recomendados?",
+      options: [
+        "Arial 11 pt o Times New Roman 12 pt",
+        "Calibri 10 pt o Verdana 9 pt",
+        "Comic Sans 14 pt o Courier New 10 pt",
+        "Georgia 13 pt o Tahoma 11 pt"
+      ],
+      correct: 0,
+      feedback: "APA 7.ª edición recomienda fuentes legibles como Times New Roman 12 pt, Arial 11 pt, Calibri 11 pt o Georgia 11 pt, entre otras."
+    },
+    {
+      question: "¿Qué es una cita narrativa en formato APA?",
+      options: [
+        "Una cita donde el autor y el año aparecen entre paréntesis al final de la oración",
+        "Una cita donde el nombre del autor se integra en el texto y el año va entre paréntesis",
+        "Una cita textual de más de 40 palabras en bloque aparte",
+        "Una nota al pie de página con la fuente completa"
+      ],
+      correct: 1,
+      feedback: "En la cita narrativa el autor forma parte de la oración: García (2020) afirma que... En la parentética, ambos van al final: (García, 2020)."
+    },
+    {
+      question: "¿Cómo se escribe correctamente una cita parentética en APA para un autor y año?",
+      options: [
+        "(García; 2020)",
+        "[García, 2020]",
+        "(García, 2020)",
+        "García [2020]"
+      ],
+      correct: 2,
+      feedback: "La cita parentética en APA usa paréntesis, apellido del autor, coma y año: (García, 2020). Si es textual, se agrega la página: (García, 2020, p. 45)."
+    },
+    {
+      question: "¿Qué es el plagio en el contexto académico?",
+      options: [
+        "Citar demasiadas fuentes en un mismo párrafo",
+        "Usar ideas propias sin respaldo bibliográfico",
+        "Presentar ideas, palabras o trabajos ajenos como propios sin dar crédito al autor original",
+        "Escribir un ensayo sin introducción ni conclusión"
+      ],
+      correct: 2,
+      feedback: "El plagio consiste en apropiarse de ideas, textos o trabajos de otros sin reconocer la autoría. Es una falta ética grave en el ámbito académico."
+    },
+    {
+      question: "¿Cuál de las siguientes es una referencia correcta en formato APA 7.ª edición para un libro?",
+      options: [
+        "García, M. (2020). Redacción académica. Editorial Norma.",
+        "García M. [2020]: Redacción académica. Editorial Norma",
+        "M. García, Redacción académica, Editorial Norma, 2020.",
+        "García, M. - Redacción académica (Editorial Norma, 2020)"
+      ],
+      correct: 0,
+      feedback: "El formato APA para libro es: Apellido, Inicial. (Año). Título en cursiva. Editorial. El punto va después de cada elemento."
+    },
+    {
+      question: "¿Cuál es el interlineado recomendado por las normas APA para el cuerpo del texto?",
+      options: [
+        "Interlineado sencillo (1.0)",
+        "Interlineado de 1.5",
+        "Interlineado doble (2.0)",
+        "Interlineado triple (3.0)"
+      ],
+      correct: 2,
+      feedback: "APA establece interlineado doble (2.0) en todo el documento, incluyendo el cuerpo del texto, referencias y citas en bloque."
+    },
+    {
+      question: "¿Qué función cumple el párrafo de conclusión en un ensayo académico?",
+      options: [
+        "Presentar nuevos argumentos que no se mencionaron en el desarrollo",
+        "Copiar textualmente la introducción para cerrar el texto",
+        "Sintetizar los argumentos principales y reafirmar la tesis sin introducir ideas nuevas",
+        "Listar todas las fuentes consultadas durante la investigación"
+      ],
+      correct: 2,
+      feedback: "La conclusión retoma y sintetiza los argumentos del desarrollo, reafirma la tesis y cierra el texto. No debe introducir ideas nuevas ni copiar la introducción."
+    }
+  ];
+
+  let currentIndex = 0;
+  let score = 0;
+  let answered = false;
+
+  const letters = ['A', 'B', 'C', 'D'];
+
+  function startQuiz() {
+    currentIndex = 0;
+    score = 0;
+    answered = false;
+    document.getElementById('screen-title').style.display = 'none';
+    document.getElementById('screen-result').style.display = 'none';
+    document.getElementById('screen-quiz').style.display = 'block';
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    answered = false;
+    const q = questions[currentIndex];
+    const total = questions.length;
+
+    document.getElementById('progress-bar').style.width = ((currentIndex / total) * 100) + '%';
+    document.getElementById('progress-text').textContent = `Pregunta ${currentIndex + 1} de ${total}`;
+    document.getElementById('score-display').textContent = `Puntos: ${score}`;
+    document.getElementById('question-number').textContent = `Pregunta ${currentIndex + 1}`;
+    document.getElementById('question-text').textContent = q.question;
+
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="option-letter">${letters[i]}</span>${opt}`;
+      btn.onclick = () => selectAnswer(i);
+      grid.appendChild(btn);
+    });
+
+    const fb = document.getElementById('feedback-box');
+    fb.className = 'feedback-box';
+    document.getElementById('btn-next').classList.add('hidden');
+  }
+
+  function selectAnswer(index) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[currentIndex];
+    const buttons = document.querySelectorAll('.option-btn');
+
+    buttons.forEach(btn => btn.disabled = true);
+
+    const isCorrect = index === q.correct;
+
+    if (isCorrect) {
+      score++;
+      buttons[index].classList.add('correct');
+    } else {
+      buttons[index].classList.add('incorrect');
+      buttons[q.correct].classList.add('correct');
+    }
+
+    const fb = document.getElementById('feedback-box');
+    const fbIcon = document.getElementById('feedback-icon');
+    const fbText = document.getElementById('feedback-text');
+
+    if (isCorrect) {
+      fb.className = 'feedback-box correct-fb show';
+      fbIcon.textContent = '✅';
+      fbText.textContent = '¡Correcto! ' + q.feedback;
+    } else {
+      fb.className = 'feedback-box incorrect-fb show';
+      fbIcon.textContent = '❌';
+      fbText.textContent = 'Incorrecto. ' + q.feedback;
+    }
+
+    document.getElementById('score-display').textContent = `Puntos: ${score}`;
+
+    const btnNext = document.getElementById('btn-next');
+    btnNext.classList.remove('hidden');
+    btnNext.textContent = currentIndex < questions.length - 1 ? 'Siguiente pregunta →' : 'Ver resultado 🏆';
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    if (currentIndex < questions.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    document.getElementById('screen-quiz').style.display = 'none';
+    document.getElementById('screen-result').style.display = 'block';
+
+    const pct = (score / questions.length) * 100;
+
+    let emoji, level, message;
+
+    if (score <= 4) {
+      emoji = '📚';
+      level = 'Nivel: Principiante';
+      message = 'Aún hay mucho por aprender sobre los ensayos académicos y las normas APA. ¡No te desanimes! Repasa los conceptos básicos y vuelve a intentarlo.';
+    } else if (score <= 7) {
+      emoji = '🎓';
+      level = 'Nivel: Intermedio';
+      message = 'Tienes una base sólida sobre el tema. Conoces los conceptos principales, pero puedes profundizar más en los detalles de la normativa APA.';
+    } else {
+      emoji = '🏆';
+      level = 'Nivel: Experto';
+      message = '¡Excelente! Dominas los ensayos académicos y la normativa APA. Tu conocimiento es sobresaliente. ¡Sigue así!';
+    }
+
+    document.getElementById('result-emoji').textContent = emoji;
+    document.getElementById('result-level').textContent = level;
+    document.getElementById('result-score').innerHTML = `${score} <span>/ ${questions.length} correctas</span>`;
+    document.getElementById('result-message').textContent = message;
+
+    setTimeout(() => {
+      document.getElementById('score-bar-fill').style.width = pct + '%';
+    }, 100);
+  }
+
+  function restartQuiz() {
+    startQuiz();
+  }
+
+  function goHome() {
+    document.getElementById('screen-result').style.display = 'none';
+    document.getElementById('screen-quiz').style.display = 'none';
+    document.getElementById('screen-title').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
